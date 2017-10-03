@@ -5,21 +5,23 @@ Build a tweet sentiment analyzer
 from __future__ import print_function
 import six.moves.cPickle as pickle
 
-from collections import OrderedDict
 import sys
 import time
-
+import imdb
 import numpy
 import numpy as np
 import theano
-from theano import config
 import theano.tensor as tensor
+import matplotlib.pyplot as plt
+import plotly.tools as tls
+
+from theano import config
 from theano.sandbox.rng_mrg import MRG_RandomStreams as RandomStreams
-
-import imdb
+from collections import OrderedDict
 from visdom import Visdom
+from PIL import Image
 
-viz = Visdom(server='http://127.0.0.1', port=51401)
+viz = Visdom(server='http://suhubdy.com', port=51401)
 
 datasets = {'imdb': (imdb.load_data, imdb.prepare_data)}
 
@@ -398,6 +400,7 @@ def build_model(tparams, options):
     f_pred_prob = theano.function([x, mask], pred, name='f_pred_prob')
     f_pred = theano.function([x, mask], pred.argmax(axis=1), name='f_pred')
 
+
     off = 1e-8
     if pred.dtype == 'float16':
         off = 1e-6
@@ -511,8 +514,7 @@ def train_lstm(
     tparams = init_tparams(params)
 
     # use_noise is for dropout
-    (use_noise, x, mask,
-     y, f_pred_prob, f_pred, cost) = build_model(tparams, model_options)
+    (use_noise, x, mask, y, f_pred_prob, f_pred, cost) = build_model(tparams, model_options)
 
     if decay_c > 0.:
         decay_c = theano.shared(numpy_floatX(decay_c), name='decay_c')
@@ -522,13 +524,56 @@ def train_lstm(
         cost += weight_decay
 
     f_cost = theano.function([x, mask, y], cost, name='f_cost')
-
     grads = tensor.grad(cost, wrt=list(tparams.values()))
     f_grad = theano.function([x, mask, y], grads, name='f_grad')
-
     lr = tensor.scalar(name='lr')
-    f_grad_shared, f_update = optimizer(lr, tparams, grads,
-                                        x, mask, y, cost)
+    f_grad_shared, f_update = optimizer(lr, tparams, grads, x, mask, y, cost)
+
+    '''
+    # print the graph
+    print("Printing cost graph")
+    cost_graph = theano.printing.debugprint(f_cost.maker.fgraph.outputs[0])
+    display1 = viz.text(cost_graph)
+
+    print("Printing grad function graph")
+    grad_graph = theano.printing.debugprint(f_grad.maker.fgraph.outputs[0])
+    display1 = viz.text(grad_graph)
+    '''
+
+    graph_cost_svg = theano.printing.pydotprint(f_cost ,  print_output_file=True, return_image=True, format='svg', scan_graphs=True,var_with_name_simple=True)
+    graph_grad_svg = theano.printing.pydotprint(f_grad , print_output_file=True, return_image=True, format='svg', scan_graphs=True, var_with_name_simple=True)
+
+    # just to check print it
+    # print(graph_cost_svg)
+
+    svgstr1 = ' """ ' + str(graph_cost_svg) + ' """ '
+    svgstr2 = ' """ ' + str(graph_grad_svg) + ' """ '
+
+    viz.svg(
+            svgstr=str(graph_cost_svg),
+            opts=dict(title='Theano Computational Graph - Cost'),
+            )
+
+    viz.svg(
+            svgstr=str(graph_grad_svg),
+            opts=dict(title='Theano Computational Graph - Cost Grad'),
+            )
+
+    '''
+    graph_cost_svg = theano.printing.pydotprint(f_cost , scan_graphs=True, return_image=True, format='svg', var_with_name_simple=True)
+    graph_grad_svg = theano.printing.pydotprint(f_grad , scan_graphs=True, return_image=True, format='svg', var_with_name_simple=True)
+    plotly_fig_cost = tls.mpl_to_plotly(graph_cost_svg)
+    plotly_fig_grad = tls.mpl_to_plotly(graph_grad_svg)
+    viz_send({ 
+            data=plotly_fig_cost.data,
+            layout=plotly_fig_cost.layout,
+            })
+    
+    viz_send({ 
+            data=plotly_fig_grad.data,
+            layout=plotly_fig_grad.layout,
+            })
+    '''
 
     print('Optimization')
 
@@ -551,16 +596,11 @@ def train_lstm(
     uidx = 0  # the number of update done
     estop = False  # early stop
     start_time = time.time()
-    uidx_list = []
     cost_list = []
     eidx_list = []
+    uidx_list = []
 
-    win = viz.line(
-            X=(np.arange(0,10)),
-            Y=(np.linspace(0, 100, 10)),
-    )
-    
-    win2 = viz.line(
+    update_costs = viz.line(
             X=(np.arange(0,10)),
             Y=(np.linspace(0, 100, 10)),
     )
@@ -602,15 +642,9 @@ def train_lstm(
                     cost_list.append(cost)
 
                     viz.line(
-                            X=numpy.asarray(eidx_list),
-                            Y=numpy.asarray(cost_list),
-                            win=win
-                    )
-                    
-                    viz.line(
                             X=numpy.asarray(uidx_list),
                             Y=numpy.asarray(cost_list),
-                            win=win2
+                            win=update_costs,
                     )
 
                 if saveto and numpy.mod(uidx, saveFreq) == 0:

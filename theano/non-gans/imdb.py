@@ -75,7 +75,6 @@ def get_dataset_file(dataset, default_dataset, origin):
         print('Downloading data from %s' % origin)
         urllib.request.urlretrieve(origin, dataset)
 
-        
     return dataset
 
 
