@@ -12,8 +12,6 @@ import numpy
 import numpy as np
 import theano
 import theano.tensor as tensor
-import matplotlib.pyplot as plt
-import plotly.tools as tls
 
 from theano import config
 from theano.sandbox.rng_mrg import MRG_RandomStreams as RandomStreams
@@ -506,7 +504,7 @@ def train_lstm(
     params = init_params(model_options)
 
     if reload_model:
-        load_params('lstm_model.npz', params)
+        load_params('../lstm_model.npz', params)
 
     # This create Theano Shared Variable from the parameters.
     # Dict name (string) -> Theano Tensor Shared Variable
@@ -529,7 +527,7 @@ def train_lstm(
     lr = tensor.scalar(name='lr')
     f_grad_shared, f_update = optimizer(lr, tparams, grads, x, mask, y, cost)
 
-    '''
+    
     # print the graph
     print("Printing cost graph")
     cost_graph = theano.printing.debugprint(f_cost.maker.fgraph.outputs[0])
@@ -538,16 +536,15 @@ def train_lstm(
     print("Printing grad function graph")
     grad_graph = theano.printing.debugprint(f_grad.maker.fgraph.outputs[0])
     display1 = viz.text(grad_graph)
-    '''
 
-    graph_cost_svg = theano.printing.pydotprint(f_cost ,  print_output_file=True, return_image=True, format='svg', scan_graphs=True,var_with_name_simple=True)
-    graph_grad_svg = theano.printing.pydotprint(f_grad , print_output_file=True, return_image=True, format='svg', scan_graphs=True, var_with_name_simple=True)
+    graph_cost_svg = theano.printing.pydotprint(f_cost ,  print_output_file=False, return_image=True, format='svg', scan_graphs=True,var_with_name_simple=True)
+    graph_grad_svg = theano.printing.pydotprint(f_grad , print_output_file=False, return_image=True, format='svg', scan_graphs=True, var_with_name_simple=True)
 
     # just to check print it
     # print(graph_cost_svg)
 
-    svgstr1 = ' """ ' + str(graph_cost_svg) + ' """ '
-    svgstr2 = ' """ ' + str(graph_grad_svg) + ' """ '
+    # svgstr1 = ' """ ' + str(graph_cost_svg) + ' """ '
+    # svgstr2 = ' """ ' + str(graph_grad_svg) + ' """ '
 
     viz.svg(
             svgstr=str(graph_cost_svg),
@@ -559,21 +556,7 @@ def train_lstm(
             opts=dict(title='Theano Computational Graph - Cost Grad'),
             )
 
-    '''
-    graph_cost_svg = theano.printing.pydotprint(f_cost , scan_graphs=True, return_image=True, format='svg', var_with_name_simple=True)
-    graph_grad_svg = theano.printing.pydotprint(f_grad , scan_graphs=True, return_image=True, format='svg', var_with_name_simple=True)
-    plotly_fig_cost = tls.mpl_to_plotly(graph_cost_svg)
-    plotly_fig_grad = tls.mpl_to_plotly(graph_grad_svg)
-    viz_send({ 
-            data=plotly_fig_cost.data,
-            layout=plotly_fig_cost.layout,
-            })
-    
-    viz_send({ 
-            data=plotly_fig_grad.data,
-            layout=plotly_fig_grad.layout,
-            })
-    '''
+
 
     print('Optimization')
 
@@ -600,7 +583,13 @@ def train_lstm(
     eidx_list = []
     uidx_list = []
 
-    update_costs = viz.line(
+
+    win = viz.line(
+            X=(np.arange(0,10)),
+            Y=(np.linspace(0, 100, 10)),
+    )
+ 
+    win2 = viz.line(
             X=(np.arange(0,10)),
             Y=(np.linspace(0, 100, 10)),
     )
@@ -642,10 +631,17 @@ def train_lstm(
                     cost_list.append(cost)
 
                     viz.line(
+                            X=numpy.asarray(eidx_list),
+                            Y=numpy.asarray(cost_list),
+                            win=win
+                    )
+
+                    viz.line(
                             X=numpy.asarray(uidx_list),
                             Y=numpy.asarray(cost_list),
-                            win=update_costs,
+                            win=win2
                     )
+
 
                 if saveto and numpy.mod(uidx, saveFreq) == 0:
                     print('Saving...')

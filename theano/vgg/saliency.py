@@ -20,11 +20,11 @@ try:
 except ImportError:
     # Python 3
     import pickle
-    with open('vgg16.pkl', 'rb') as f:
+    with open('/data/lisatmp3/suhubdyd/vgg16.pkl', 'rb') as f:
         model = pickle.load(f, encoding='latin-1')
 else:
     # Python 2
-    with open('vgg16.pkl', 'rb') as f:
+    with open('/data/lisatmp3/suhubdyd/vgg16.pkl', 'rb') as f:
         model = pickle.load(f)
 
 # try importing weights and classes

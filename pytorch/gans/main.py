@@ -18,16 +18,13 @@ def parse_args():
     parser.add_argument('--gan_type', type=str, default='EBGAN',
                         choices=['GAN', 'CGAN', 'infoGAN', 'ACGAN', 'EBGAN', 'BEGAN', 'WGAN', 'WGAN_GP' 'DRAGAN', 'LSGAN'],
                         help='The type of GAN')#, required=True)
-    parser.add_argument('--dataset', type=str, default='mnist', choices=['mnist', 'fashion-mnist', 'celebA'],
-                        help='The name of dataset')
+    parser.add_argument('--dataset', type=str, default='mnist', choices=['mnist', 'fashion-mnist', 'celebA'], help='The name of dataset')
     parser.add_argument('--epoch', type=int, default=25, help='The number of epochs to run')
     parser.add_argument('--batch_size', type=int, default=64, help='The size of batch')
-    parser.add_argument('--save_dir', type=str, default='models',
-                        help='Directory name to save the model')
-    parser.add_argument('--result_dir', type=str, default='results',
-                        help='Directory name to save the generated images')
-    parser.add_argument('--log_dir', type=str, default='logs',
-                        help='Directory name to save training logs')
+    parser.add_argument('--save_dir', type=str, default='models', help='Directory name to save the model')
+    parser.add_argument('--result_dir', type=str, default='results', help='Directory name to save the generated images')
+    parser.add_argument('--log_dir', type=str, default='logs', help='Directory name to save training logs')
+    parser.add_argument('--visdom', type=str, default='0', help='Display results on Visdom')
     parser.add_argument('--lrG', type=float, default=0.0002)
     parser.add_argument('--lrD', type=float, default=0.0002)
     parser.add_argument('--beta1', type=float, default=0.5)
