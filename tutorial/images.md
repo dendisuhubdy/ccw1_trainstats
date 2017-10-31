@@ -28,7 +28,6 @@ def save_images(images, num_x, num_y, out_file=None):
                            .reshape(num_x * dim_x, num_y * dim_y, dim_c)))
 ```
 
-
 The trick for Visualizing images in Visdom is to load it as an array then modify it to reduce the stream size and do a `vis.image` to 
 send it to the Visdom server
 
@@ -45,9 +44,10 @@ arr = np.array(im)
 viz.image(arr, opts=dict(title=title, caption=caption), win='image_{}'.format(image_id), env=env)
 ```
 
-It is that simple.
+It is that simple. 
 
-Sometimes the problems that we'd face is that the image is too big to stream and we would want to make the visualization tiled. For this case we could use the function `tile_raster_image` from [deeplearning.net](http://deeplearning.net/tutorial/code/utils.py).
+Sometimes the problems that we'd face is that the image is too big to stream and we would want to make the visualization tiled. 
+For this case we could use the function `tile_raster_image` from [deeplearning.net](http://deeplearning.net/tutorial/code/utils.py).
 
 ```
 def scale_to_unit_interval(ndar, eps=1e-8):
@@ -183,7 +183,6 @@ def tile_raster_images(X, img_shape, tile_shape, tile_spacing=(0, 0),
 Finally with some modifications for image captions and labels, we'd arrive at this script
 
 ```
-
 def save_images(images, num_x, num_y, env='main', out_file=None, labels=None,
                 margin_x=5, margin_y=5, image_id=0, caption='', title=''):
     logger.info('Saving images')
@@ -265,5 +264,7 @@ def save_images(images, num_x, num_y, env='main', out_file=None, labels=None,
                          win='image_{}'.format(image_id), env=env)
         im.save(out_file)
         logger.info('Done saving image')
-
 ```
+
+Credit:
+Thanks for Devon Hjelm and Samuel Lavoie for helping me for this code.

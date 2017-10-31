@@ -12,8 +12,7 @@ pip install visdom
 
 # Usage
 
-One Visdom is installed, now you can use use it for visualization. For a simple architectural understanding of visdom for the user, Visdom consists of a server and Python commands that you can use to stream your 
-objects (experimental training statistics, GAN images, saliency maps) to it.
+One Visdom is installed, now you can use use it for visualization. For a simple architectural understanding of visdom for the user, Visdom consists of a server and Python commands that you can use to stream your objects (experimental training statistics, GAN images, saliency maps) to it.
 
 ## Turning on the server
 
@@ -28,7 +27,6 @@ This fires up the Visdom server at the default host and port which is localhost 
 ```
 python -m visdom.server --port <any_valid_TCP_port>
 ```
-
 
 ## Streaming to the server
 
@@ -49,8 +47,8 @@ viz = Visdom(server='http://suhubdy.com', port=51401)
 would setup a Python object which refers to a TCP client stream to the TCP server server at `www.suhubdy.com` and at port `51401`. Some common mistakes that you might see if you stream to your server, for example
 
 ```
-python - m visdom.server(server=www.suhubdy.com, port=51401)
+from visdom import Visdom
+viz = Visdom(server=www.suhubdy.com, port=51401)
 ```
+
 this will NOT turn on your Visdom server, it needs to use the `http` protocol on top of it and the value of it must be between character literals ` ' ' ` .
-
-

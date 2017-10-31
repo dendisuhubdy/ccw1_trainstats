@@ -159,7 +159,6 @@ Those variables starting with `win_` are window placeholders that would be updat
                 )
 
 ```
-
 as you could see what we do is update the window `win` which is our previous designated windows, and update them with new plots points of X and Y. The whole training script finally looks like this
 
 ```
