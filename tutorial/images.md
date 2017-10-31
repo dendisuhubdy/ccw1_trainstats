@@ -1,6 +1,6 @@
 # Visualizing Images with Visdom
 
-For example you would want to look at your GAN pictures while training, at first your code looks like this
+For example you would want to look at your GAN pictures while training. We assume that you would want to plot images that you previously have saved to disk (which is not unusual for GANs)
 
 ```
 def save_images(images, num_x, num_y, out_file=None):
