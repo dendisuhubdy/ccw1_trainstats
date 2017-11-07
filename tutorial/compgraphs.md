@@ -22,6 +22,8 @@ For example when you define your loss
 
 you do a `theano.printing.pydotpring(var, return_image=True, format='svg')`
 
+## Second step: send it to the Visdom server using viz.SVG
+
 then you can send the SVG object using `viz.SVG`
 
 ```

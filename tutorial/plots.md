@@ -297,3 +297,6 @@ def train_model(model, train_data, valid_data, fields, optim):
             trainer.drop_checkpoint(opt, epoch, fields, valid_stats)
 
 ```
+
+![alt text](https://github.com/dendisuhubdy/ccw1_trainstats/blob/master/tutorial/images/Screenshot3.png "Neural Machine Translation Visdom Visualization")
+
