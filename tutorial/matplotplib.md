@@ -63,16 +63,4 @@ viz._send({
 
 ```
 
-## Common Mistakes
-
-When we do a `vis._send` we need to make send it as a `dict` instead, this is a common mistake that I've made during working with visdom
-
-```
-    plotly_fig = tls.mpl_to_plotly(fig)
-    viz._send(
-            data=plotly_fig.data,
-            layout=plotly_fig.layout,
-            )
-```
-
 the full example could be seen [here](https://github.com/dendisuhubdy/ccw1_trainstats/blob/master/pytorch/vgg/main.py)

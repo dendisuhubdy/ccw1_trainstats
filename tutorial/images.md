@@ -266,5 +266,9 @@ def save_images(images, num_x, num_y, env='main', out_file=None, labels=None,
         logger.info('Done saving image')
 ```
 
+Here is a screenshot of the result of the Visdom imaging
+
+![alt text](https://github.com/dendisuhubdy/ccw1_trainstats/blob/master/tutorial/images/Screenshot2.png "GAN Images")
+
 Credit:
 Thanks for Devon Hjelm and Samuel Lavoie for helping me for this code.

@@ -1,1 +1,1 @@
-python main_discrete.py -o ./ -S /data/lisatmp3/suhubdyd/mnist/binarized_mnist.hdf5
+python main_discrete.py -o ./ -S /data/milatmp1/suhubdyd/datasets/mnist/binarized_mnist.hdf5
