@@ -8,11 +8,11 @@ For example when you define your loss
 
 ```
     print("Printing cost graph")
-    cost_graph = theano.printing.debugprint(f_cost.maker.fgraph.outputs[0])
+    cost_graph = theano.printing.debugprint(f_cost)
     display1 = viz.text(cost_graph)
 
     print("Printing grad function graph")
-    grad_graph = theano.printing.debugprint(f_grad.maker.fgraph.outputs[0])
+    grad_graph = theano.printing.debugprint(f_grad)
     display1 = viz.text(grad_graph)
 
     graph_cost_svg = theano.printing.pydotprint(f_cost ,  print_output_file=False, return_image=True, format='svg', scan_graphs=True,var_with_name_simple=True)

@@ -24,8 +24,11 @@ python -m visdom.server
 
 This fires up the Visdom server at the default host and port which is localhost and port `8097`. If you would want to fire it up at another host for example if you host your Visdom server at your own public IP for teamwork purposes
 
+![alt text](https://github.com/dendisuhubdy/ccw1_trainstats/blob/master/tutorial/images/Screenshot1.png "Visdom Server On")
+
+
 ```
-python -m visdom.server --port <any_valid_TCP_port>
+python -m visdom.server -port <any_valid_TCP_port>
 ```
 
 ## Streaming to the server
