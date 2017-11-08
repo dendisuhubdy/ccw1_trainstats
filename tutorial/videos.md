@@ -90,6 +90,6 @@ except ImportError as packageError:
     print(packageError)
 ```
 
-The following sources has being used to write some parts of the above tutorial:
-alimony, gifduration, (2017), GitHub repository, https://github.com/alimony/gifduration/blob/master/gifduration.py
-facebookresearch, visdom, (2017), GitHub repository, https://github.com/facebookresearch/visdom/blob/master/example/demo.py
+The following sources has being used to write some parts of the above tutorial:  
+alimony, gifduration, (2017), https://github.com/alimony/gifduration/blob/master/gifduration.py  
+facebookresearch, visdom, (2017), https://github.com/facebookresearch/visdom/blob/master/example/demo.py  
