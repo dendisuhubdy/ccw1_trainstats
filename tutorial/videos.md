@@ -62,9 +62,9 @@ try:
         except KeyError:
             # Ignore if there was no duration, we will not count that frame.
             pass
-    total_duration = sum(durations)
+    total_duration = sum(durations) # in miliseconds
 
-    gif_fps_ave = video.shape[0] * 1000 / total_duration
+    gif_fps_ave = video.shape[0] * 1000 / total_duration # average fps
 
     viz.video(
         tensor=video,
