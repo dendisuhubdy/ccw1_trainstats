@@ -32,7 +32,7 @@ In order to stream a local file we can use the following line:
 viz.video(videofile=address_string_to_your_file)
 ```
 ## Combining altogether
-After initializing the visdom instance and checking that our connection to visdom server is being made, we will create a video using a local sample GIF image as the tensor argument. We calculate an average delay originally stored in GIF file. In case of a non-local file, by providing the url address of a sample video, we can make sure that the video file we want to play is downloaded and stored locally. Then, by passing the downloaded file address to video method of our visdom instance, the video becomes available through the visdom server.
+After initializing the visdom instance and checking that our connection to visdom server is being made, by providing the url address of a sample video and a sample GIF file, we make sure that the video file and the GIF file we want to play are downloaded and stored locally. Next, the video becomes available through the visdom server by calling the video method of our visdom instance taking the downloaded file address as input. As for our GIF file, in order to prepare the GIF tensor, while creating a video array from the stored GIF file, we also calculate the average frames per second (fps) of our GIF animation. Finally, by passing the resulting video array and average fps to `tensor` and `opts['fps']` arguments, respectively, a temporary .ogv file will be made and posted on the visdom server.
 
 ```
 from visdom import Visdom
@@ -42,6 +42,7 @@ from sys import platform as _platform
 import getpass
 from skimage.io import imread
 from PIL import Image, ImageSequence
+from six.moves import urllib
 
 viz = Visdom()
 
@@ -49,42 +50,49 @@ assert (viz.check_connection())
 
 # video demo:
 try:
-    videofile="sample.gif"
-    # reading GIF file as numpy array
-    video = np.flip(m = imread(videofile), axis=3) # RGB to BGR
-
-    # computing an average fps
-    img_gif = Image.open(videofile)
-    durations = []
-    for frame in ImageSequence.Iterator(img_gif):
-        try:
-            durations.append(frame.info['duration'])
-        except KeyError:
-            # Ignore if there was no duration, we will not count that frame.
-            pass
-    total_duration = sum(durations) # in miliseconds
-
-    gif_fps_ave = video.shape[0] * 1000 / total_duration # average fps
-
-    viz.video(
-        tensor=video,
-        opts=dict(fps=gif_fps_ave)
-    )
     
-    # video demo: download video from http://media.w3.org/2010/05/sintel/trailer.ogv
+    # GIF & video demo: download files from sources
     video_url = 'http://media.w3.org/2010/05/sintel/trailer.ogv'
+    gif_url = 'https://upload.wikimedia.org/wikipedia/commons/2/2c/Rotating_earth_%28large%29.gif?download'
     # linux
     if _platform == "linux" or _platform == "linux2":
         videofile = '/home/%s/Downloads/trailer.ogv' % getpass.getuser()
+        GIFfile = '/home/%s/Downloads/Rotating_earth_(large).gif' % getpass.getuser()
     # MAC OS X
     elif _platform == "darwin":
         videofile = '/Users/%s/Downloads/trailer.ogv' % getpass.getuser()
+        GIFfile = '/Users/%s/Downloads/Rotating_earth_(large).gif' % getpass.getuser()
 
     # download video
     urllib.request.urlretrieve(video_url, videofile)
-    
+    urllib.request.urlretrieve(gif_url, GIFfile)
+
     if os.path.isfile(videofile):
-        viz.video(videofile=videofile)
+        viz.video(videofile=videofile)    
+    
+    if os.path.isfile(GIFfile):
+        
+        # reading GIF file as numpy array
+        video = np.flip(m = imread(GIFfile), axis=3) # RGB to BGR
+    
+        # computing an average fps
+        img_gif = Image.open(GIFfile)
+        durations = []
+        for frame in ImageSequence.Iterator(img_gif):
+            try:
+                durations.append(frame.info['duration'])
+            except KeyError:
+                # Ignore if there was no duration, we will not count that frame.
+                pass
+        total_duration = sum(durations) # in miliseconds
+    
+        gif_fps_ave = video.shape[0] * 1000 / total_duration # average fps
+    
+        viz.video(
+            tensor=video,
+            opts=dict(fps=gif_fps_ave)
+        )
+    
 except ImportError as packageError:
     print("The following required packages don't exist:")
     print(packageError)
